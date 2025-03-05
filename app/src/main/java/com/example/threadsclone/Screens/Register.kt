@@ -11,27 +11,12 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -48,10 +33,10 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil3.compose.rememberAsyncImagePainter
 import com.example.threadsclone.R
 import com.example.threadsclone.navigation.Routes
 import com.example.threadsclone.viewModel.AuthViewModel
+import coil3.compose.rememberAsyncImagePainter
 
 @Composable
 fun Register(navHostController: NavHostController) {
@@ -81,15 +66,15 @@ fun Register(navHostController: NavHostController) {
             imageUri = uri
         }
 
-    // Launch effect to navigate to BottomNav when user is logged in
-    LaunchedEffect(firebaseUser) {
-        if (firebaseUser != null) {
-            navHostController.navigate(Routes.BottomNav.routes) {
-                popUpTo(navHostController.graph.startDestinationId)
-                launchSingleTop = true
+    // Permission request launcher
+    val permissionRequestLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+            if (isGranted) {
+                launcher.launch("image/*")
+            } else {
+                Toast.makeText(context, "Permission denied to access storage", Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
     // Function to validate email format
     fun isEmailValid(email: String): Boolean {
@@ -125,14 +110,17 @@ fun Register(navHostController: NavHostController) {
                 .clip(CircleShape)
                 .background(Color.LightGray)
                 .clickable {
+                    // Check if the permission is granted
                     val isGranted = ContextCompat.checkSelfPermission(
                         context, permissionToRequest
                     ) == PackageManager.PERMISSION_GRANTED
 
                     if (isGranted) {
+                        // Launch the image picker if permission is granted
                         launcher.launch("image/*")
                     } else {
-                        // Handle permission request (optional)
+                        // Request permission if not granted
+                        permissionRequestLauncher.launch(permissionToRequest)
                     }
                 },
             contentScale = ContentScale.Crop
