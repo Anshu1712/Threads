@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "184420820875",
+    "project_id": "threads-clone-383f4",
+    "storage_bucket": "threads-clone-383f4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:184420820875:android:3b25ff26fb731ce63ff18e",
+        "android_client_info": {
+          "package_name": "com.example.threadsclone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfYHSHIKslIoAWVlS2JPqZLk_4-LKboOA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
