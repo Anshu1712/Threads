@@ -24,19 +24,19 @@ fun NavGraph(navController: NavHostController){
             Splash(navController)
         }
         composable(Routes.Home.routes){
-            Home()
+            Home(navController)
         }
         composable(Routes.Notification.routes){
             Notification()
         }
         composable(Routes.AddThreads.routes){
-            AddThreads()
+            AddThreads(navController)
         }
         composable(Routes.Search.routes){
             Search()
         }
         composable(Routes.Profile.routes){
-            Profile()
+            Profile(navController)
         }
         composable(Routes.BottomNav.routes){
             BottomNav(navController)

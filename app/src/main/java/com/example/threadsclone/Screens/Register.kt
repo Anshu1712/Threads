@@ -4,7 +4,6 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -40,48 +39,57 @@ import coil3.compose.rememberAsyncImagePainter
 
 @Composable
 fun Register(navHostController: NavHostController) {
+    var email by remember {
+        mutableStateOf("")
+    }
+    var name by remember {
+        mutableStateOf("")
+    }
+    var bio by remember {
+        mutableStateOf("")
+    }
+    var userName by remember {
+        mutableStateOf("")
+    }
+    var password by remember {
+        mutableStateOf("")
+    }
 
-    // Email, name, bio, userName, password state variables
-    val email = remember { mutableStateOf("") }
-    val name = remember { mutableStateOf("") }
-    val bio = remember { mutableStateOf("") }
-    val userName = remember { mutableStateOf("") }
-    val password = remember { mutableStateOf("") }
-
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by remember {
+        mutableStateOf<Uri?>(null)
+    }
 
     val authViewModel: AuthViewModel = viewModel()
     val firebaseUser by authViewModel.firebaseUser.observeAsState(null)
 
-    // Permissions for accessing the device storage
-    val permissionToRequest = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    val permissionToRequest = if (Build.VERSION.SDK_INT > Build.VERSION_CODES.TIRAMISU) {
         Manifest.permission.READ_MEDIA_IMAGES
     } else Manifest.permission.READ_EXTERNAL_STORAGE
 
     val context = LocalContext.current
 
-    // Image picker launcher
     val launcher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.GetContent()) { uri: Uri? ->
             imageUri = uri
         }
 
-    // Permission request launcher
-    val permissionRequestLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
+    val permissionLauncher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                launcher.launch("image/*")
+
             } else {
-                Toast.makeText(context, "Permission denied to access storage", Toast.LENGTH_SHORT).show()
+
             }
         }
-
-    // Function to validate email format
-    fun isEmailValid(email: String): Boolean {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    LaunchedEffect(firebaseUser) {
+        if (firebaseUser != null) {
+            navHostController.navigate(Routes.BottomNav.routes) {
+                popUpTo(navHostController.graph.startDestinationId)
+                launchSingleTop = true
+            }
+        }
     }
 
-    // UI Layout
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,137 +98,97 @@ fun Register(navHostController: NavHostController) {
         verticalArrangement = Arrangement.Center
     ) {
 
-        // Register text header
         Text(
-            text = "Register Here", style = TextStyle(
+            text = "Register", style = TextStyle(
                 fontWeight = FontWeight.ExtraBold,
                 fontSize = 24.sp
+
             )
         )
 
         Box(modifier = Modifier.height(25.dp))
 
-        // Profile image upload button
         Image(
             painter = if (imageUri == null) painterResource(id = R.drawable.man)
-            else rememberAsyncImagePainter(model = imageUri),
-            contentDescription = "person",
+            else rememberAsyncImagePainter(model = imageUri), contentDescription = "person",
             modifier = Modifier
                 .size(96.dp)
                 .clip(CircleShape)
                 .background(Color.LightGray)
                 .clickable {
-                    // Check if the permission is granted
+
                     val isGranted = ContextCompat.checkSelfPermission(
                         context, permissionToRequest
                     ) == PackageManager.PERMISSION_GRANTED
 
                     if (isGranted) {
-                        // Launch the image picker if permission is granted
                         launcher.launch("image/*")
                     } else {
-                        // Request permission if not granted
-                        permissionRequestLauncher.launch(permissionToRequest)
+                        permissionLauncher.launch(permissionToRequest)
                     }
-                },
-            contentScale = ContentScale.Crop
+
+                }, contentScale = ContentScale.Crop
         )
 
         Box(modifier = Modifier.height(25.dp))
 
-        // Name, UserName, Bio, Email, and Password fields
-        OutlinedTextField(
-            value = name.value,
-            onValueChange = { name.value = it },
-            label = { Text(text = "Name") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = {
+            Text(text = "Name")
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        OutlinedTextField(
-            value = userName.value,
-            onValueChange = { userName.value = it },
-            label = { Text(text = "Username") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        OutlinedTextField(value = userName, onValueChange = { userName = it }, label = {
+            Text(text = "Username")
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        OutlinedTextField(
-            value = bio.value,
-            onValueChange = { bio.value = it },
-            label = { Text(text = "Bio") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+        OutlinedTextField(value = bio, onValueChange = { bio = it }, label = {
+            Text(text = "Bio")
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Email field
-        OutlinedTextField(
-            value = email.value,
-            onValueChange = { email.value = it },
-            label = { Text(text = "Email") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+        OutlinedTextField(value = email, onValueChange = { email = it }, label = {
+            Text(text = "Email")
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
-
-        // Password field
-        OutlinedTextField(
-            value = password.value,
-            onValueChange = { password.value = it },
-            label = { Text(text = "Password") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        OutlinedTextField(value = password, onValueChange = { password = it }, label = {
+            Text(text = "Password")
+        }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true,
             modifier = Modifier.fillMaxWidth()
         )
 
         Box(modifier = Modifier.height(30.dp))
 
-        // Register button
         ElevatedButton(onClick = {
-            try {
-                // Validate user input before attempting registration
-                if (name.value.isEmpty() || email.value.isEmpty() || bio.value.isEmpty() || password.value.isEmpty() || imageUri == null) {
-                    Toast.makeText(context, "Please fill all details", Toast.LENGTH_SHORT).show()
-                } else if (!isEmailValid(email.value)) {
-                    Toast.makeText(context, "Invalid email format", Toast.LENGTH_SHORT).show()
-                } else {
-                    // Pass email and other fields to the register function after trimming spaces
-                    authViewModel.register(
-                        email.value.trim(),
-                        password.value.trim(),
-                        name.value.trim(),
-                        bio.value.trim(),
-                        userName.value.trim(),
-                        imageUri!!,
-                        context
-                    )
-                }
-            } catch (e: Exception) {
-                // Log the exception and show an error message
-                Log.e("Register", "Registration failed", e)
-                Toast.makeText(context, "Registration failed. Please try again.", Toast.LENGTH_SHORT).show()
+
+            if (name.isEmpty() || bio.isEmpty() || userName.isEmpty() || email.isEmpty() || password.isEmpty() || imageUri == null) {
+                Toast.makeText(context, "Please fill all details", Toast.LENGTH_SHORT).show()
+            } else {
+                authViewModel.register(email, password, name, bio, userName, imageUri!!, context)
             }
         }, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Register", style = TextStyle(
+                text = "Register here", style = TextStyle(
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp
                 ), modifier = Modifier.padding(vertical = 6.dp)
             )
         }
-
-        // Navigate to login page if already registered
         TextButton(onClick = {
             navHostController.navigate(Routes.Login.routes) {
                 popUpTo(navHostController.graph.startDestinationId)
                 launchSingleTop = true
             }
+
         }, modifier = Modifier.fillMaxWidth()) {
             Text(
-                text = "Already registered? Login here", style = TextStyle(
+                text = "Already register ? Create Account", style = TextStyle(
                     fontSize = 16.sp
                 )
             )
@@ -231,5 +199,5 @@ fun Register(navHostController: NavHostController) {
 @Preview(showBackground = true)
 @Composable
 fun RegisterView() {
-    // Register()
+    //  Register()
 }

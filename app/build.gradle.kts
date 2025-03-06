@@ -73,6 +73,7 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation("com.cloudinary:cloudinary-android:3.0.2")
+    implementation("com.google.firebase:firebase-storage")
 
 
 }
