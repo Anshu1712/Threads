@@ -60,7 +60,7 @@ dependencies {
 
     val nav_version = "2.8.8"
 
-    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.8")
     implementation("androidx.navigation:navigation-compose:$nav_version")
 
@@ -70,10 +70,9 @@ dependencies {
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
-    implementation("com.google.firebase:firebase-analytics-ktx")
     implementation ("com.squareup.picasso:picasso:2.8")
     implementation("com.cloudinary:cloudinary-android:3.0.2")
-    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-storage-ktx")
 
 
 }

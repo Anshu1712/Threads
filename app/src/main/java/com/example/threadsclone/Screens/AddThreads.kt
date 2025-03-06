@@ -47,7 +47,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil3.compose.rememberAsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+//import coil3.compose.rememberAsyncImagePainter
 import com.example.threadsclone.R
 import com.example.threadsclone.navigation.Routes
 import com.example.threadsclone.utils.SharedPref

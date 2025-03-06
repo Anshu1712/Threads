@@ -25,7 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import coil3.compose.rememberAsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+//import coil3.compose.rememberAsyncImagePainter
 import com.example.threadsclone.R
 import com.example.threadsclone.model.ThreadsModel
 import com.example.threadsclone.model.UserModel
